@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fantasy Map</title>
+    <style>
+        .pin {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            color: black;
+        }
+
+        .positive {
+            background-color: red;
+        }
+
+        .negative {
+            background-color: blue;
+            width: 10px;
+            height: 10px;
+            line-height: 10px;
+        }
+
+        .button1 {
+            /* padding: 25px 50px; /* Increase button padding */
+            padding: 1vw 2vh; /* Increase button padding */
+            font-size: 5vh; /* Increase button font size */
+            margin: 0.1vh;
+            position: fixed; /* Make the button fixed */
+            bottom: 1vh; /* Position the button at the top */
+            left: 1vh; /* Position the button at the top */
+        }
+
+        .button2 {
+            /* padding: 25px 50px; /* Increase button padding */
+            padding: 1vw 2vh; /* Increase button padding */
+            font-size: 5vh; /* Increase button font size */
+            margin: 0.1vh;
+            position: fixed; /* Make the button fixed */
+            bottom: 1vh; /* Position the button at the top */
+            left: 12vh; /* Position the button at the top */
+        }
+
+        p {
+            font-size: 5vh; /* Increase counter font size */
+            position: fixed; /* Make the counter fixed */
+            top: 1vh; /* Position the counter at the top */
+            margin: 1vh;
+            background-color: white; /* Add a white background */
+            padding: 1vh; /* Add some padding inside the border */
+        }
+    </style>
+</head>
+<body>
+    <!--<div id="map" style="position: relative; width: 6554px; height: 4916px; background-image: url('E-helix world map.jpg');"></div> -->
+    <div id="map" style="position: relative; width: 8192px; height: 5726px; background-image: url('E-helix world map.jpg');"></div>
+    <button class="button1" onclick="changeNumbers(-1)">+</button>
+    <button class="button2" onclick="changeNumbers(1)">-</button>
+    <p id="counter">0 AIK</p>
+    <script>
+        const counterElement = document.getElementById('counter');
+        var days = 0; // this can be hard coded if i want to start at a different day
+
+        var pins = [
+        { x: 5380, y: 4940, number: 13, description: "Military outpost (123):\nAfter being washed away this is the nearest outpost you are aware of, you are in a rush to group back up with the miliatry" },
+        //{ x: 5024, y: 4597, number: 33, description: "Iclad Port Ambush (A): Evil +40% \nIclad Bay will be under seige. If this port falls any ally forces in the destronise islands will be trapped without any escape. \n\nEffects: All allies in the region will recieve a -50% to any battle. \n\nPresent Allies: 1st infantry battalion B flying and seige brigades, 2nd star Hartley Warp \n\nPresent Enemies: Doublebuster twins, battaltion DD, DV, OD4, OB, OV1, OVS1" },
+        //{ x: 4640, y: 4424, number: 22, description: "Infiltrate Lennings Cave (B):  \nYou learned about the location of the vampire stronghold in destronise, it must be heavily fortified and very deadly, but if you can magage to break in you might be able to find some useful information; or even better some loot or new friends." },
+        //{ x: 5265, y: 4390, number: 13, description: "Skullport Haven Siege (C):  \nYou have found plans for a siege on skullport haven a bed for piracy, but if the attack suceeds all of the ship speeds in the regions are halfed. Don't forget these pirates are ravaging our supply lines. \n Present Enemies: Division OD5" },
+        //{ x: 5506, y: 4320, number: 15, description: "Washed Away Recruits (D):\nYou have learned that some recent allies ships sinking has left some men stranded on a remote island." },
+        //{ x: 5480, y: 4210, number: 16, description: "New Leads (E):\nYou have all seen some documents that indicate suspicious doppleganger activity on this remote island, what could this lead to?" },
+        { x: 4690, y: 3825, number: 20, description: "Sylvanvale Siege (F): Evil +31%\nThe sylvanvale lumbermill is underattack. These lumbermills are critical to maintain as middle empire ships are made of tetonishian wood. Your job is to distract or kill the dragon for 5 turns, so your allies can flank the enemy, suceeding will add +35%. \n\nEffects: A loss of greater than 50% will lead to complete breakdown of ship production and will limit future friendly invasion forces to 1 bridage. Otherwise a loss less than that will lead to it being limited to 3 brigades.\n\nPresent Allies: Aldric Mindweaver 2nd star, 1st A.A.A, 1st A.A.B, 1st A.C.A,1st A.C.B\n\nPresent Enemies: young twin dragon, platoon YV, battalion OVS2, battalion od3, platoon OC1" },
+        //{ x: 4755, y: 3580, number: 25, description: "Description 8" },
+        //{ x: 4675, y: 3440, number: 22, description: "Recruitment (H):\nSome recruits on a mission to destroy the crystal in the adamantine crator got seperated from the main group, if you can find them they can join your ranks." },
+        //{ x: 4455, y: 3410, number: 30, description: "Dreamtalite Crystal (I):\n A large distrubance in magic has been detected near the adamantite meteor, nearby intelligence suggests that the vampires are trying to bring armies through these portals. If sucessful the vampires may be able to push their schedule ahead with larger numbers. If you want more details speak to Aldric Mindweaver. \nEffect: Vampires will get to rush 3 battles by 5 days and in addition bolster each of those battles. In addition each battle will gain a chance that nirvana will appear." },
+        { x: 4234, y: 3445, number: 32, description: "Battle for Oasis Reach (J):\nEvil +1% to ??%\n Your Division is about to be embroiled in combat over a smaller strategic city which the current home of 3rd infantry division. from what you can tell from your friend in 3rd, they are assembling a small team that is to carry out a special mission that can swing the battle (+30%). There have been strange reports of excessive drowsiness amoung the troops. \n\nEffect: if the enemy wins , the difference in percentage is the chance that both 3rd star general gains luck and 2nd star general Sums Riemens die during the conflict. If either dies during the conflict the city will fall, otherwise normal casualty effects apply. \n\nPresent Allies: Gains luck 3rd star, Sums Riemens 2nd star, 3rd infantry division, 3rd AAA AAB ACA ACB BFA BFB \n\nPresent Enemies: Division OG, platoon OVS1, platoon OVS2, battalion OD1, platoon OM1, (?????)" },
+        { x: 4150, y: 3300, number: 70, description: "Battle for Ishtar (K): Evil +74%\nA critical battle. This battle is over the already conflict wrought lands of ishtar. You cannot find a specific tactical reason why this battle is important, but your gut tells you losing would be a mistake. And winning might reveal the secrets of the world. \n\nEffects: On a loss reduce all ally movement speed across the empire by half, and in addition ????????????. In case of a victory, gain the opportunity to learn knowledge that has been hidden for millenia. \n\nPresent Allies: Rufus Reason 3rd star, 1st infantry division, 1st AAC, AAD,AAE,ACC ACD ACE \nPresent Enemies: Lazarus, plattoon LG, regiment LV" },
+        //{ x: 4270, y: 3240, number: 70, description: "Ishtarian Friendship (L): \nnow armed with the truth and the location of maleth, you may be able to recruit him and the famed priest imador to your side to defend the cities of ishtar. adds a +100% to the battle of Ishtar." },
+        //{ x: 4595, y: 2955, number: 45, description: "Description 14" },
+        //{ x: 3810, y: 2990, number: 75, description: "Description 15" },
+        { x: 4298, y: 2790, number: 54, description: "Redwood Defense (N):\n It is time to defend redwood one of the major logging towns of the middle empire. You contribution can play a major role and can decide the battle outright if you play your cards right. Otherwise evil will have a +8% autoresolve. \nEffect: Losing Redwood would cause a logistical breakdown, the price of all goods will be doubled in the middle empire for the next 15 days.  \nPresent Allies: 2nd star schrodinger, 3rd ACD BSA BSB BSC \nPresent Enemies: Nirvana, Maria,Battalaion MD NM ND, platoon MVS" },
+        //{ x: 3751, y: 3022, number: 59, description: "Homecoming (O):\nYou all have recieved orders to return to bellinhime for your next assignments, I wonder what they could be. Being tardy could have major consequences on your reputation and lead to missed opportunities." },
+        //{ x: 3164, y: 2924, number: 55, description: "Description 18" },
+        //{ x: 3125, y: 2922, number: 67, description: "Description 19" },
+        //{ x: 2960, y: 2500, number: 60, description: "Description 20" },
+        //{ x: 2630, y: 3130, number: 70, description: "Rampaging Dino (RD):\nOn the ship ride to bellinhime you hear stories about a rampaging dinosaur who has been terrorizing the locals of a nearby town in the marshlands." },
+        //{ x: 2677, y: 2436, number: 60, description: "Description 22" },
+        //{ x: 2940, y: 2119, number: 61, description: "Description 23" },
+        //{ x: 3985, y: 2605, number: 70, description: "Buried Secrets (U):\nFrom all the evidence you have gathered thus far there is something strange about the baptism of ishtar, maybe its time to finally figure out what" },
+        { x: 3990, y: 2402, number: 80, description: "Battle for Flerg (V):Evil +33% \n A intense battle for flerg will take place. Much is at stake in this battle, much more than one can imagine. Maybe you have something to contribute to the battle to swing the results. \n\nPresent Allies: Archempress 4th star general, 2nd star general schrodinger, empress battalion 1 & 2, 3rd AAC AAD  ACC  \n\nPresent Enemies: Ancient Dragon, battalion AV ADW OV2 OVS3" },
+        { x: 4450, y: 2500, number: 142, description: "The Battle of Voda Vesi (W):Good +24% to Evil +76% \nA pivotal battle is about to take place for the jewel of the middle empire. Hopefully you have earned your seat at the war table. Recently people in the area have been very drowsy and all of the metal workers seem to shock themselves from static every hour. \n\nEffect: In case of a loss over 50% all future battles with middle empire troops will have a -50%, and all middle empire ships are destroyed. In case of a loss all middle empire ships are destroyed, and the boats to assault the isle of krait must come from somewhere else. \n\nPresent Allies: admiral monsoor, monsoor siege/infantry/archer, 2nd AAD AAE ACC BFA BSA  \n\nPresent Enemies: Ulfur, battalion GC platoon GG GD  battalion OC1 OV3 OD2, possibly ??? and ??? " },
+        //{ x: 4490, y: 2500, number: 95, description: "Description 27" },
+        { x: 4229, y: 2540, number: 75, description: "Battle of Giesga (Y): Evil +26% \nGiesga is the heartland of food production for the world if it falls it would be dire. \n\nEffect: For the next 15 days anytime a long rest is taken, you must make a constitution saving throw with a DC equal to the difference of the battle, if you fail take a level of exhaustion after you complete your long rest from trying to stave of starvation. \n\nPresent Allies: 3rd star Gains Luck, 3rd infantry division, 3rd ACE BCC AAA BSC \n\nPresent Enemies: Adult Dragon, Battalion ADV OC2, platoon ADDW" },
+        //{ x: 4691, y: 2745, number: 109, description: "Description 29" },
+        //{ x: 4895, y: 2715, number: 110, description: "Scabs hire quick (AA):\nan official in Voda Vesi metioned to you that if you want to bolster your numbers there are many impoverished people in serpents tounge who would love a position" },
+        //{ x: 4940, y: 2920, number: 106, description: "Description 31" },
+        //{ x: 5002, y: 3101, number: 111, description: "Description 32" },
+        //{ x: 5060, y: 2500, number: 130, description: "Description 33" },
+        //{ x: 5160, y: 2115, number: 135, description: "Description 34" },
+        //{ x: 4775, y: 2084, number: 137, description: "Description 35" },
+        //{ x: 3560, y: 2360, number: 170, description: "Description 36" },
+        //{ x: 3540, y: 2610, number: 164, description: "Description 37" },
+        { x: 4090, y: 2080, number: 160, description: "Prepare for Invasion (AH):\ncollect all of your forces its time to take the isle of krait" },
+        { x: 4010, y: 2850, number: 65, description: "Call for help (Al):\nA passenger ship of ishtarian refugees has gotten stuck in the middle of the river, without any help many of them will drown." },
+        //{ x: 4330, y: 2915, number: 42, description: "Clicking Trees (Wl):\nYour sword has informed you of a great ancient magic castor that resides within these woods almost as ancient as the sword himself, maybe its time to pay them a visit." },
+        { x: 4410, y: 3550, number: 31, description: "Recruiting (R1):\nYou hear rumors of a small platoon that got lost in the forest on the way to thier next mission, it may be time to bolster your numbers" },
+        //{ x: 3140, y: 2750, number: 70, description: "Recruiting (R2):\nYou hear that a talec caravan has met disanster on the road, maybe you can find from new allies from this event" },
+        { x: 3730, y: 3410, number: 80, description: "Recruiting (R3):\nYou hear rumors of an allied ship sinking, this could lead to more allies" },
+        //{ x: 5175, y: 2290, number: 140, description: "Recruiting (R4):\nYou hear rumors from the guards at the mines of eldoth that goblins have been attacking some allies and some seem to have been captured, maybe you can gain some allys by saving them" },
+        //{ x: 3830, y: 2330, number: 165, description: "Recruiting (R5): \nYou heard from the mayor that there is a small detachment of volunteers that tried to go join the intial vangaurd but seem hopelessly lost, they sent someone capable to go find them but haven't heard back yet. This might be a chance to do a good dead and meet some capable people" },
+        //{ x: 4470, y: 3160, number: 32, description: "Battle of WetWood (SL):\nEvil +(11+20)% \n A battle for the heart of sobbing lake is about to take place, you learned through the grape vine that many illegal magical items move through here under the direction of the levrone family. You can't figure out why the enemy would attack wet wood as it hold almost no tatical value. But some big names are showing up so something must be happening, it also never hurts to be in the levrone families good graces. \n Present allies:2nd star Mirron Stately, 2nd A.A.A, 2nd A.A.B, 2nd A.A.C, 2nd A.C.B \n Present Enemies: Renzo Wright, Nirvana, Division RS, Battaloin NM, battalion ND, platoon OC2" }
+        ];
+
+        function addPin(x, y, number, description) {
+            var pin = document.createElement("div");
+            pin.className = "pin " + (number >= 0 ? "positive" : "negative");
+            pin.style.left = x + "px";
+            pin.style.top = y + "px";
+            pin.innerText = Math.abs(number); // Show absolute value
+            pin.title = description; // Set the title attribute for the description
+            document.getElementById("map").appendChild(pin);
+        }
+
+        function updatePins() {
+            var pinElements = document.getElementsByClassName("pin");
+            for (var i = 0; i < pinElements.length; i++) {
+                pinElements[i].innerText = Math.abs(pins[i].number);
+                pinElements[i].className = "pin " + (pins[i].number >= 0 ? "positive" : "negative");
+                pinElements[i].title = pins[i].description;
+            }
+        }
+
+        function changeNumbers(delta) {
+            pins.forEach(pin => {
+                pin.number += delta;
+            });
+            days += delta;
+            counterElement.innerText = (-days) + " AIK";
+            updatePins();
+        }
+
+        // Add initial pins to the map
+        pins.forEach(pin => {
+            addPin(pin.x, pin.y, pin.number, pin.description);
+        });
+    </script>
+</body>
+</html>
